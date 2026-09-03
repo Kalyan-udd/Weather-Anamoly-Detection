@@ -13,7 +13,10 @@ dependencies = [
     "fastapi[standard]>=0.141.1",
     "ipykernel>=7.3.0",
     "matplotlib>=3.11.1",
+    "openmeteo-requests>=1.7.5",
     "pandas>=3.0.5",
+    "requests-cache>=1.3.3",
+    "retry-requests>=2.0.0",
     "setuptools>=84.0.0",
 ]
 
