@@ -42,7 +42,7 @@ class ImportData:
         return self.dataframe
 
 class ImportCoordinates:
-    def __init__(self, cache_path: str = "data/coordinates/coordinates.cache"):
+    def __init__(self, cache_path: str = "data/coordinates/coordinates"):
         self.session = requests_cache.CachedSession(cache_path, expire_after=-1)
         self.retry = retry(self.session, retries=5, backoff_factor=0.2)
         self.latitude = None
@@ -61,7 +61,7 @@ class ImportCoordinates:
         response = self.retry.get(url=url, params=params)
         data = response.json()
         result = data["results"][0]
-        self.city = result['admin3']
+        self.city = result['name']
         self.district = result['admin2']
         self.state = result['admin1']
         self.time_zone = result['timezone']
