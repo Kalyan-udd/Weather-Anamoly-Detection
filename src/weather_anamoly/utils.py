@@ -11,7 +11,7 @@ class ImportData:
         self.dataframe = None
         self.hourly = None
 
-    def extract(self, start_date: str, end_date: str, latitude: float, longitude: float):
+    def extract(self, start_date: str, end_date: str, latitude: float, longitude: float) -> pd.DataFrame:
         url = "https://archive-api.open-meteo.com/v1/archive"
         params = {
             "latitude": latitude,
@@ -38,3 +38,33 @@ class ImportData:
                 "pressure": self.hourly.Variables(2).ValuesAsNumpy(),
             }
         ).set_index("date")
+
+        return self.dataframe
+
+class ImportCoordinates:
+    def __init__(self, cache_path: str = "data/coordinates/coordinates.cache"):
+        self.session = requests_cache.CachedSession(cache_path, expire_after=-1)
+        self.retry = retry(self.session, retries=5, backoff_factor=0.2)
+        self.latitude = None
+        self.longitude = None
+        self.city = None
+        self.district = None
+        self.state = None
+        self.time_zone = None
+
+    def Fetch_coordinates(self, city:str ) -> tuple[float, float]:
+        url= "https://geocoding-api.open-meteo.com/v1/search"
+        params = {
+            'name': f"{city}, India",
+            'count': 1,
+        }
+        response = self.retry.get(url=url, params=params)
+        data = response.json()
+        result = data["results"][0]
+        self.city = result['admin3']
+        self.district = result['admin2']
+        self.state = result['admin1']
+        self.time_zone = result['timezone']
+        self.longitude = result['longitude']
+        self.latitude = result['latitude']
+        return (self.latitude, self.longitude)
