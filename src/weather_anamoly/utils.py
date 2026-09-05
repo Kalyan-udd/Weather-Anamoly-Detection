@@ -68,3 +68,8 @@ class ImportCoordinates:
         self.longitude = result['longitude']
         self.latitude = result['latitude']
         return (self.latitude, self.longitude)
+
+
+class AnomalyAddition:
+    def __init__(self):
+        
