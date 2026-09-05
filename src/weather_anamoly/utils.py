@@ -70,6 +70,3 @@ class ImportCoordinates:
         return (self.latitude, self.longitude)
 
 
-class AnomalyAddition:
-    def __init__(self):
-        

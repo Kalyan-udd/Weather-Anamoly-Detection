@@ -1,4 +1,4 @@
-Folder Structure: 
+# Folder Structure
 
 Weather_anamoly/
         ---.venv/
@@ -35,7 +35,3 @@ Weather_anamoly/
         ---pyproject.toml
         ---requirements.txt
         ---uv.lock
-
-
-
-
