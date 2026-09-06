@@ -132,4 +132,3 @@ class AnomalyInjection:
         self.inject_comm_error(n_events=max(1, n_hours//comm_rate), df=df)
         self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df)
         return df
-        
