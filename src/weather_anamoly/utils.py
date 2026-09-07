@@ -153,6 +153,6 @@ class AnomalyInjection:
 
         self.inject_spike(n_events=max(1, n_hours//spike_rate), df=df, clean_std=clean_stds)
         self.inject_forzen(n_events=max(1, n_hours//frozen_rate), df=df)
-        self.inject_comm_error(n_events=max(1, n_hours//comm_rate), df=df)
+        #self.inject_comm_error(n_events=max(1, n_hours//comm_rate), df=df)
         self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df, clean_std=clean_stds)
         return df
