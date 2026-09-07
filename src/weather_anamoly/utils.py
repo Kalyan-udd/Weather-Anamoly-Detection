@@ -81,34 +81,47 @@ class AnomalyInjection:
         if clean_std is None:
             clean_std = df[list(self.columns)].std().to_dict()
         for i in range(n_events):
-            index = self.rnd.integers(0,n)
-            col = self.rnd.choice(self.columns)
-            std = clean_std[col]
-            direction = self.rnd.choice([-1, 1])
-            magnitude = self.rnd.uniform(3,12)*std
-            df.loc[index, col] =  df.loc[index, col] + direction*magnitude
-            df.loc[index, "label"] = "spike"          
+            for tries in range(10):
+                row_pos = self.rnd.integers(0,n)
+                index_label = df.index[row_pos]
+                if df.loc[index_label, "label"] == "genuine":
+                    index = self.rnd.integers(0,n)
+                    col = self.rnd.choice(self.columns)
+                    std = clean_std[col]
+                    direction = self.rnd.choice([-1, 1])
+                    magnitude = self.rnd.uniform(3,12)*std
+                    df.loc[index, col] =  df.loc[index, col] + direction*magnitude
+                    df.loc[index, "label"] = "spike"
+                    break 
         return df
 
     def inject_forzen(self,df: pd.DataFrame ,n_events: int) -> pd.DataFrame:
         n = len(df)
         for i in range(n_events):
-            duration = self.rnd.integers(3,13)
-            start = self.rnd.integers(0, n - duration)
-            col = self.rnd.choice(self.columns)
-            stuck_value = df.loc[start, col]
-            df.loc[start:start+duration-1, col] = stuck_value
-            df.loc[start:start+duration-1, "label"] = "frozen"
+            for attempt in range(10):
+                duration = self.rnd.integers(3,13)
+                start = self.rnd.integers(0, n - duration)
+                target_indices = df.index[start: start+duration-1]
+                if (df.loc[target_indices, "label"] == "genuine").all():
+                    col = self.rnd.choice(self.columns)
+                    stuck_value = df.loc[start, col]
+                    df.loc[target_indices, col] = stuck_value
+                    df.loc[target_indices, "label"] = "frozen"
+                    break
         return df
 
     def inject_comm_error(self,df: pd.DataFrame ,n_events: int) -> pd.DataFrame:
             n = len(df)
             for i in range(n_events):
-                duration = self.rnd.integers(1,6)
-                start = self.rnd.integers(0, n - duration)
-                col = self.rnd.choice(self.columns)
-                df.loc[start:start+duration-1, col] = np.nan
-                df.loc[start:start+duration-1, "label"] = "comm_error"
+                for attempt in range(10):
+                    duration = self.rnd.integers(1,6)
+                    start = self.rnd.integers(0, n - duration)
+                    target_indices = df.index[start:start+duration-1]
+                    if (df.loc[target_indices, "label"] == "genuine").all():
+                        col = self.rnd.choice(self.columns)
+                        df.loc[target_indices, col] = np.nan
+                        df.loc[target_indices, "label"] = "comm_error"
+                        break
             return df
 
     def inject_drift_fault(self, df: pd.DataFrame, n_values:int, clean_std: dict) -> pd.DataFrame:
@@ -116,15 +129,19 @@ class AnomalyInjection:
         if clean_std is None:
             clean_std = df[list(self.columns)].std().to_dict()
         for i in range(n_values):
-            duration = self.rnd.integers(24*14, 24*56)
-            start = self.rnd.integers(0, n - duration)
-            col = self.rnd.choice(self.columns)
-            std = clean_std[col]
-            per_step_bias = self.rnd.uniform(0.02, 0.08)*std
-            direction = self.rnd.choice([-1, 1])
-            ramp = np.arange(1, duration+1)*per_step_bias*direction
-            df.loc[start:start+duration-1, col] = df.loc[start:start+duration-1, col].values + ramp
-            df.loc[start:start+duration-1, "label"] = "fault"
+            for attempt in range(10):
+                duration = self.rnd.integers(24*14, 24*56)
+                start = self.rnd.integers(0, n - duration)
+                target_indices = df.index[start:start+duration-1]
+                if (df.loc[target_indices, "label"] == "genuine").all():
+                    col = self.rnd.choice(self.columns)
+                    std = clean_std[col]
+                    per_step_bias = self.rnd.uniform(0.02, 0.08)*std
+                    direction = self.rnd.choice([-1, 1])
+                    ramp = np.arange(1, duration)*per_step_bias*direction
+                    df.loc[target_indices, col] = df.loc[target_indices, col].values + ramp
+                    df.loc[target_indices, "label"] = "fault"
+                    break
         return df
 
     def inject_anomalies(self, df:pd.DataFrame, spike_rate: int=1500, frozen_rate: int=2500, comm_rate:int =3000, drift_rate: int = 6000)-> pd.DataFrame:
