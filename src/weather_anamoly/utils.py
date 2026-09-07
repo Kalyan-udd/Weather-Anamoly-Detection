@@ -38,8 +38,8 @@ class ImportData:
                 "temperature": self.hourly.Variables(0).ValuesAsNumpy(),
                 "humidity": self.hourly.Variables(1).ValuesAsNumpy(),
                 "pressure": self.hourly.Variables(2).ValuesAsNumpy(),
-            }
-        ).set_index("date")
+            },
+        )
 
         return self.dataframe
 
@@ -76,12 +76,14 @@ class AnomalyInjection:
         self.rnd = np.random.default_rng(seed)
         self.columns = columns
 
-    def inject_spike(self,n_events: int, df: pd.DataFrame) -> pd.DataFrame:
+    def inject_spike(self,n_events: int, df: pd.DataFrame, clean_std:dict) -> pd.DataFrame:
         n = len(df)
+        if clean_std is None:
+            clean_std = df[list(self.columns)].std().to_dict()
         for i in range(n_events):
             index = self.rnd.integers(0,n)
             col = self.rnd.choice(self.columns)
-            std = df[col].std()
+            std = clean_std[col]
             direction = self.rnd.choice([-1, 1])
             magnitude = self.rnd.uniform(3,12)*std
             df.loc[index, col] =  df.loc[index, col] + direction*magnitude
@@ -109,13 +111,15 @@ class AnomalyInjection:
                 df.loc[start:start+duration-1, "label"] = "comm_error"
             return df
 
-    def inject_drift_fault(self, df: pd.DataFrame, n_values:int) -> pd.DataFrame:
+    def inject_drift_fault(self, df: pd.DataFrame, n_values:int, clean_std: dict) -> pd.DataFrame:
         n = len(df)
+        if clean_std is None:
+            clean_std = df[list(self.columns)].std().to_dict()
         for i in range(n_values):
             duration = self.rnd.integers(24*14, 24*56)
             start = self.rnd.integers(0, n - duration)
             col = self.rnd.choice(self.columns)
-            std = df[col].std()
+            std = clean_std[col]
             per_step_bias = self.rnd.uniform(0.02, 0.08)*std
             direction = self.rnd.choice([-1, 1])
             ramp = np.arange(1, duration+1)*per_step_bias*direction
@@ -127,8 +131,11 @@ class AnomalyInjection:
         if "label" not in df.columns:
             df['label'] = "genuine"
         n_hours = len(df)
-        self.inject_spike(n_events=max(1, n_hours//spike_rate), df=df)
+
+        clean_stds = df[list(self.columns)].std().to_dict()
+
+        self.inject_spike(n_events=max(1, n_hours//spike_rate), df=df, clean_std=clean_stds)
         self.inject_forzen(n_events=max(1, n_hours//frozen_rate), df=df)
         self.inject_comm_error(n_events=max(1, n_hours//comm_rate), df=df)
-        self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df)
+        self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df, clean_std=clean_stds)
         return df
