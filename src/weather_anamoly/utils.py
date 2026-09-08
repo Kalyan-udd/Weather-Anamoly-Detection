@@ -168,6 +168,8 @@ class AnomalyInjection:
 def data_transformation(df:pd.DataFrame, elevation: Optional[float]=None, latitude: Optional[float]=None, longitude:Optional[float]=None, location_involvement: bool = False, )-> pd.DataFrame:
     df['date'] = pd.to_datetime(df['date'])
     df = df.set_index('date')
+    df['hour'] = df.index.hour
+    df['month'] = df.index.month
     df['cos_hour'] = np.cos(2*np.pi*df.index.hour/24)
     df['sin_hour'] = np.sin(2*np.pi*df.index.hour/24)
     df['cos_month'] = np.cos(2*np.pi*df.index.month/12)
