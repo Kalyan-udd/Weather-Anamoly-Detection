@@ -8,20 +8,9 @@ class WeatherReading(BaseModel):
 
     timestamp: datetime
 
-    temperature: float | None = Field(
-        default=None,
-        ge=-90,
-        le=70
-    )
+    temperature: float 
+    
 
-    pressure: float | None = Field(
-        default=None,
-        ge=850,
-        le=1100
-    )
+    pressure: float 
 
-    humidity: float | None = Field(
-        default=None,
-        ge=0,
-        le=100
-    )
+    humidity: float 
