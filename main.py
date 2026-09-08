@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-
 from src.weather_anamoly.api.routes import router
 from src.weather_anamoly.database.database import initialize_database
 
