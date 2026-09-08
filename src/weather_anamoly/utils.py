@@ -3,13 +3,18 @@ import requests_cache
 import openmeteo_requests
 import pandas as pd
 import numpy as np
-from typing import Optional, List
+from typing import Optional
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent.parent
+data_path = f"{ROOT}/model_training"
+
 
 class ImportData:
-    def __init__(self, cache_path : str = "data/weather_cache"):
+    def __init__(self, cache_path : str = f"{data_path}/data/weather_cache"):
         self.Cached_session = requests_cache.CachedSession(cache_path, expire_after=-1)
         self.retry_session = retry(self.Cached_session, retries=5, backoff_factor=0.2)
-        self.openmeteo = openmeteo_requests.Client(session=self.retry_session)
+        self.openmeteo = openmeteo_requests.Client(session = self.retry_session)
         self.dataframe = None
         self.hourly = None
 
@@ -35,16 +40,16 @@ class ImportData:
                     freq=pd.Timedelta(seconds=self.hourly.Interval()),
                     inclusive="left"
                 ),
-                "temperature": self.hourly.Variables(0).ValuesAsNumpy(),
-                "humidity": self.hourly.Variables(1).ValuesAsNumpy(),
-                "pressure": self.hourly.Variables(2).ValuesAsNumpy(),
+                "temperature": self.hourly.Variables(0).ValuesAsNumpy().astype('float64'),
+                "humidity": self.hourly.Variables(1).ValuesAsNumpy().astype('float64'),
+                "pressure": self.hourly.Variables(2).ValuesAsNumpy().astype('float64'),
             },
         )
 
         return self.dataframe
 
 class ImportCoordinates:
-    def __init__(self, cache_path: str = "data/coordinates/coordinates"):
+    def __init__(self, cache_path: str = f"{data_path}/data/coordinates/coordinates"):
         self.session = requests_cache.CachedSession(cache_path, expire_after=-1)
         self.retry = retry(self.session, retries=5, backoff_factor=0.2)
         self.latitude = None
@@ -53,6 +58,7 @@ class ImportCoordinates:
         self.district = None
         self.state = None
         self.time_zone = None
+        self.elevation = None
 
     def Fetch_coordinates(self, city:str ) -> tuple[float, float]:
         url= "https://geocoding-api.open-meteo.com/v1/search"
@@ -69,6 +75,7 @@ class ImportCoordinates:
         self.time_zone = result['timezone']
         self.longitude = result['longitude']
         self.latitude = result['latitude']
+        self.elevation = result['elevation']
         return (self.latitude, self.longitude)
 
 class AnomalyInjection:
@@ -156,3 +163,20 @@ class AnomalyInjection:
         #self.inject_comm_error(n_events=max(1, n_hours//comm_rate), df=df)
         self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df, clean_std=clean_stds)
         return df
+
+
+def data_transformation(df:pd.DataFrame, elevation: Optional[float]=None, latitude: Optional[float]=None, longitude:Optional[float]=None, location_involvement: bool = False, )-> pd.DataFrame:
+    df['date'] = pd.to_datetime(df['date'])
+    df = df.set_index('date')
+    df['cos_hour'] = np.cos(2*np.pi*df.index.hour/24)
+    df['sin_hour'] = np.sin(2*np.pi*df.index.hour/24)
+    df['cos_month'] = np.cos(2*np.pi*df.index.month/12)
+    df['sin_month'] = np.sin(2*np.pi*df.index.month/12)
+    df['temp_gradient'] = df['temperature'].diff()
+    df['humid_gradient'] = df['humidity'].diff()
+    df['press_gradient'] = df['pressure'].diff()
+    if location_involvement:
+        df['elevation'] = elevation
+        df['latitude'] = latitude
+        df['longitude'] = longitude
+    return df
