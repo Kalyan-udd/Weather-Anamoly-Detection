@@ -127,7 +127,6 @@ uvloop==0.22.1
 wassima==2.1.4
 watchfiles==1.2.0
 wcwidth==0.8.3
--e file:///home/Beta/Desktop/coding/weather_anamoly
 websockets==17.1
 wheel==0.48.0
 wrapt==2.4.0
