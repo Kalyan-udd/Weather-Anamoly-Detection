@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIH AnomalyWatch | Historical Analysis & Test Lab</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              500: '#14b8a6',
+              600: '#0d9488',
+              900: '#134e4a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .glass {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    /* Style the native datepicker icons to fit dark mode */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.8);
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-teal-500 selection:text-white">
+
+  <!-- Top Navigation Bar -->
+  <nav class="border-b border-slate-800 bg-slate-900/60 sticky top-0 z-50 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="p-2 bg-teal-500/10 border border-teal-500/30 rounded-lg text-teal-400">
+          <i data-lucide="shield-alert" class="w-5 h-5"></i>
+        </div>
+        <span class="text-lg font-bold tracking-wide text-white">Sky<span class="text-teal-400">Guard</span></span>
+        <span class="text-xs font-mono uppercase bg-slate-800 text-teal-300 px-2 py-0.5 rounded border border-slate-700">Lab Suite</span>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="{{ url_for('index') }}" class="text-xs px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1.5">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Dashboard
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- Header -->
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Time-Series Telemetry & Anomaly Testing</h1>
+      <p class="text-slate-400 text-sm mt-1">Submit custom date ranges to run your anomaly models on archival or historical Open-Meteo records.</p>
+    </div>
+
+    <!-- Parameter Input Card -->
+    <div class="glass p-6 rounded-2xl border border-slate-800">
+      <form id="historicalForm" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        
+        <!-- Location Input -->
+        <div class="md:col-span-2 space-y-1.5">
+          <label for="locationInput" class="text-xs font-medium text-slate-300 uppercase tracking-wider">Target Location</label>
+          <div class="relative">
+            <i data-lucide="map-pin" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input 
+              type="text" 
+              id="locationInput" 
+              placeholder="e.g., Guwahati, Shimla, Mumbai" 
+              required
+              class="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition placeholder:text-slate-500 text-white"
+            />
+          </div>
+        </div>
+
+        <!-- Start Date -->
+        <div class="space-y-1.5">
+          <label for="startDateInput" class="text-xs font-medium text-slate-300 uppercase tracking-wider">Start Date</label>
+          <div class="relative">
+            <input 
+              type="date" 
+              id="startDateInput" 
+              required
+              class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition text-slate-200"
+            />
+          </div>
+        </div>
+
+        <!-- End Date -->
+        <div class="space-y-1.5">
+          <label for="endDateInput" class="text-xs font-medium text-slate-300 uppercase tracking-wider">End Date</label>
+          <div class="relative">
+            <input 
+              type="date" 
+              id="endDateInput" 
+              required
+              class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition text-slate-200"
+            />
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="md:col-span-4 flex justify-end gap-3 mt-2">
+          <button 
+            type="button" 
+            onclick="setPresetLast7Days()"
+            class="px-3.5 py-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 font-medium rounded-xl text-xs transition">
+            Last 7 Days
+          </button>
+          <button 
+            type="submit" 
+            id="queryBtn"
+            class="px-6 py-2.5 bg-teal-500 hover:bg-teal-600 active:scale-95 text-slate-950 font-bold rounded-xl text-sm transition flex items-center gap-2">
+            <span>Fetch & Run Anomaly Pipeline</span>
+            <i data-lucide="cpu" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Status Strip -->
+    <div id="statusStrip" class="hidden p-4 rounded-xl border text-sm flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i id="statusIcon" data-lucide="info" class="w-4 h-4"></i>
+        <span id="statusMessage">Awaiting run trigger...</span>
+      </div>
+    </div>
+
+    <!-- Results Overview Area -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Metadata & Anomaly Summary -->
+      <div class="glass p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div>
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Analyzed Range</span>
+          <h2 id="resLocation" class="text-xl font-bold text-white mt-1">--</h2>
+          <p id="resCoords" class="text-xs text-slate-500 font-mono mt-0.5">Lat: -- | Lon: --</p>
+          <p id="resDates" class="text-xs text-teal-400 font-mono mt-1">Period: -- to --</p>
+        </div>
+
+        <div class="border-t border-slate-800/80 pt-4 space-y-3">
+          <div class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Model Pipeline Flags</div>
+          
+          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">
+            <span class="text-xs text-slate-300">Thermal Anomalies</span>
+            <span id="thermalBadge" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400">None</span>
+          </div>
+
+          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">
+            <span class="text-xs text-slate-300">Precipitation Spikes</span>
+            <span id="precipBadge" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400">None</span>
+          </div>
+
+          <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">
+            <span class="text-xs text-slate-300">Pressure Inversions</span>
+            <span id="pressureBadge" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400">None</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Highlights -->
+      <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-4">
+        
+        <div class="glass p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <span class="text-xs font-medium uppercase text-slate-400">Max Recorded Temp</span>
+          <div class="mt-3">
+            <div id="maxTempDisplay" class="text-2xl font-bold text-white">--°C</div>
+            <p class="text-[11px] text-slate-500 mt-1">Across given range</p>
+          </div>
+        </div>
+
+        <div class="glass p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <span class="text-xs font-medium uppercase text-slate-400">Min Recorded Temp</span>
+          <div class="mt-3">
+            <div id="minTempDisplay" class="text-2xl font-bold text-white">--°C</div>
+            <p class="text-[11px] text-slate-500 mt-1">Across given range</p>
+          </div>
+        </div>
+
+        <div class="glass p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <span class="text-xs font-medium uppercase text-slate-400">Total Precipitation</span>
+          <div class="mt-3">
+            <div id="totalPrecipDisplay" class="text-2xl font-bold text-white">-- mm</div>
+            <p class="text-[11px] text-slate-500 mt-1">Sum of period</p>
+          </div>
+        </div>
+
+        <div class="glass p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <span class="text-xs font-medium uppercase text-slate-400">Peak Wind Gust</span>
+          <div class="mt-3">
+            <div id="maxWindDisplay" class="text-2xl font-bold text-white">-- km/h</div>
+            <p class="text-[11px] text-slate-500 mt-1">Max surface gust</p>
+          </div>
+        </div>
+
+        <div class="glass p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <span class="text-xs font-medium uppercase text-slate-400">Mean Pressure</span>
+          <div class="mt-3">
+            <div id="meanPressureDisplay" class="text-2xl font-bold text-white">-- hPa</div>
+            <p class="text-[11px] text-slate-500 mt-1">Atmospheric average</p>
+          </div>
+        </div>
+
+        <div class="glass p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <span class="text-xs font-medium uppercase text-slate-400">Data Points</span>
+          <div class="mt-3">
+            <div id="pointsCountDisplay" class="text-2xl font-bold text-teal-400">--</div>
+            <p class="text-[11px] text-slate-500 mt-1">Hourly records queried</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Raw JSON Inspector for Debugging -->
+    <div class="glass p-6 rounded-2xl border border-slate-800">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+          <i data-lucide="terminal" class="w-4 h-4 text-teal-400"></i>
+          <span class="text-sm font-semibold text-white">Backend Response Payload Inspector</span>
+        </div>
+        <span class="text-xs font-mono text-slate-500">POST /api/historical-weather</span>
+      </div>
+      <pre id="jsonPreview" class="mt-4 p-4 rounded-xl bg-slate-950 border border-slate-800/80 text-xs font-mono text-emerald-400 overflow-x-auto max-h-96 leading-relaxed">Awaiting input submission to display telemetry payload...</pre>
+    </div>
+
+  </main>
+
+  <script>
+    lucide.createIcons();
+
+    // Utility: Auto-fill last 7 days preset
+    function setPresetLast7Days() {
+      const today = new Date();
+      const prior = new Date();
+      prior.setDate(today.getDate() - 7);
+
+      document.getElementById('endDateInput').value = today.toISOString().split('T')[0];
+      document.getElementById('startDateInput').value = prior.toISOString().split('T')[0];
+    }
+
+    // Default dates setup (last 7 days by default)
+    setPresetLast7Days();
+
+    // Show status banner helper
+    function showStatus(msg, type = 'info') {
+      const banner = document.getElementById('statusStrip');
+      const messageSpan = document.getElementById('statusMessage');
+      banner.classList.remove('hidden', 'bg-red-500/10', 'border-red-500/20', 'text-red-400', 'bg-emerald-500/10', 'border-emerald-500/20', 'text-emerald-400', 'bg-slate-900', 'text-slate-300');
+
+      if (type === 'error') {
+        banner.classList.add('bg-red-500/10', 'border-red-500/20', 'text-red-400');
+      } else if (type === 'success') {
+        banner.classList.add('bg-emerald-500/10', 'border-emerald-500/20', 'text-emerald-400');
+      } else {
+        banner.classList.add('bg-slate-900', 'border-slate-800', 'text-slate-300');
+      }
+
+      messageSpan.innerText = msg;
+    }
+
+    // Form Submission
+    document.getElementById('historicalForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const location = document.getElementById('locationInput').value.trim();
+      const startDate = document.getElementById('startDateInput').value;
+      const endDate = document.getElementById('endDateInput').value;
+      const queryBtn = document.getElementById('queryBtn');
+      const jsonPreview = document.getElementById('jsonPreview');
+
+      if (!location || !startDate || !endDate) return;
+
+      if (new Date(startDate) > new Date(endDate)) {
+        showStatus('Start Date cannot be after End Date.', 'error');
+        return;
+      }
+
+      queryBtn.disabled = true;
+      queryBtn.innerHTML = `<span>Processing Telemetry...</span>`;
+      showStatus(`Dispatching POST request for ${location} (${startDate} → ${endDate})...`);
+      jsonPreview.innerText = 'Transmitting request to backend...';
+
+      // The exact JSON payload sent to your Python backend
+      const payload = {
+        location: location,
+        start_date: startDate,
+        end_date: endDate
+      };
+
+      try {
+        const response = await fetch('/api/historical-weather', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.detail || `Server returned HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        // Pretty print raw payload in the debug terminal
+        jsonPreview.innerText = JSON.stringify(data, null, 2);
+
+        // Update UI Summary
+        document.getElementById('resLocation').innerText = data.city || location;
+        document.getElementById('resCoords').innerText = `Lat: ${data.latitude} | Lon: ${data.longitude}`;
+        document.getElementById('resDates').innerText = `Period: ${startDate} to ${endDate}`;
+
+        // Populate metrics if hourly data exists
+        if (data.weather && data.weather.hourly) {
+          const temps = data.weather.hourly.temperature_2m || [];
+          const precips = data.weather.hourly.precipitation || [];
+          const winds = data.weather.hourly.wind_speed_10m || [];
+          const pressures = data.weather.hourly.surface_pressure || [];
+
+          if (temps.length > 0) {
+            document.getElementById('maxTempDisplay').innerText = `${Math.max(...temps).toFixed(1)}°C`;
+            document.getElementById('minTempDisplay').innerText = `${Math.min(...temps).toFixed(1)}°C`;
+          }
+
+          if (precips.length > 0) {
+            const sumPrecip = precips.reduce((a, b) => a + (b || 0), 0);
+            document.getElementById('totalPrecipDisplay').innerText = `${sumPrecip.toFixed(1)} mm`;
+          }
+
+          if (winds.length > 0) {
+            document.getElementById('maxWindDisplay').innerText = `${Math.max(...winds).toFixed(1)} km/h`;
+          }
+
+          if (pressures.length > 0) {
+            const validPressures = pressures.filter(p => p != null);
+            const avgPressure = validPressures.reduce((a, b) => a + b, 0) / validPressures.length;
+            document.getElementById('meanPressureDisplay').innerText = `${avgPressure.toFixed(0)} hPa`;
+          }
+
+          document.getElementById('pointsCountDisplay').innerText = temps.length;
+        }
+
+        // Anomaly Status badges (if your ML model returned flags)
+        if (data.anomalies) {
+          updateBadge('thermalBadge', data.anomalies.temperature);
+          updateBadge('precipBadge', data.anomalies.precipitation);
+          updateBadge('pressureBadge', data.anomalies.pressure);
+        }
+
+        showStatus(`Pipeline completed successfully for ${data.city || location}.`, 'success');
+
+      } catch (err) {
+        console.error(err);
+        showStatus(`Execution failed: ${err.message}`, 'error');
+        jsonPreview.innerText = `Error:\n${err.message}`;
+      } finally {
+        queryBtn.disabled = false;
+        queryBtn.innerHTML = `<span>Fetch & Run Anomaly Pipeline</span><i data-lucide="cpu" class="w-4 h-4"></i>`;
+        lucide.createIcons();
+      }
+    });
+
+    function updateBadge(id, isAnomaly) {
+      const el = document.getElementById(id);
+      if (isAnomaly) {
+        el.className = 'text-xs font-mono font-semibold px-2 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/30';
+        el.innerText = 'ALERT';
+      } else {
+        el.className = 'text-xs font-mono font-semibold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+        el.innerText = 'NOMINAL';
+      }
+    }
+  </script>
+</body>
+</html>

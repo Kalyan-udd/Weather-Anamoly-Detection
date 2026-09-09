@@ -6,6 +6,9 @@ import numpy as np
 from typing import Optional
 from pathlib import Path
 from weather_anamoly.logger import logger
+import requests
+import tensorflow as tf
+from tensorflow.keras.optimizers import Adam
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 data_path = f"{ROOT}/model_training"
@@ -59,24 +62,25 @@ class ImportCoordinates:
         self.longitude = None
         self.time_zone = None
         self.elevation = None
+        self.city = None
 
-    def Fetch_coordinates(self, city:str ) -> Optional[tuple[float, float]]:
+    def Fetch_coordinates(self, city:str ) -> tuple[float, float]:
         url= "https://geocoding-api.open-meteo.com/v1/search"
         params = {
             'name': f"{city}, India",
             'count': 1,
         }
-        try:
-            response = self.retry.get(url=url, params=params)
-            data = response.json()
-            result = data["results"][0]
-            self.time_zone = result['timezone']
-            self.longitude = result['longitude']
-            self.latitude = result['latitude']
-            self.elevation = result['elevation']
-            return (self.latitude, self.longitude)
-        except Exception as e:
-            logger.info(f"failed to fetch coordinates {e}")
+     
+        response = self.retry.get(url=url, params=params)
+        data = response.json()
+        result = data["results"][0]
+        self.city = result['name']
+        self.time_zone = result['timezone']
+        self.longitude = result['longitude']
+        self.latitude = result['latitude']
+        self.elevation = result['elevation']
+        return (self.latitude, self.longitude)
+
 class AnomalyInjection:
     def __init__(self,columns = ('temperature', 'pressure', 'humidity'), seed = 42):
         self.rnd = np.random.default_rng(seed)
@@ -183,3 +187,43 @@ def data_transformation(df:pd.DataFrame, elevation: Optional[float]=None, latitu
         df['longitude'] = longitude
     df.dropna(axis=0, inplace=True)
     return df
+
+def fetch_continuous_data(location:str):
+    coordinates = ImportCoordinates()
+    lat, long = coordinates.Fetch_coordinates(location)
+    loc = coordinates.city
+    weather_url = "https://api.open-meteo.com/v1/forecast"
+    weather_params = {
+        "latitude": lat,
+        "longitude": long,
+        "current": "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,surface_pressure,wind_speed_10m"
+    }
+    weather_data = requests.get(weather_url, weather_params, timeout=5)
+    weather_json = weather_data.json()
+
+    return{
+        "city": loc,
+        "latitude": lat,
+        "longitude": long,
+        "weather" : weather_json
+    }
+
+def Build_model(hp):
+    model = tf.keras.Sequential()
+    num_layers = hp.Int("num_layers", min_value=1, max_value=5, step=1)
+    for i in range(num_layers):
+        units = hp.Int(f"unit_layer_{i}", min_value=32, max_value=512, step=16)
+        model.add(tf.keras.layers.Dense(units=units, activation=hp.Choice(f"activation_layer_{i}", ['relu', 'tanh', 'elu'])))
+
+        if hp.Boolean(f'dropout_layer_{i}'):
+            model.add(tf.keras.layers.Dropout(
+                hp.Float(f"dropout_rate_{i}", 0.1, 0.5, step=0.1)
+            ))
+    model.add(tf.keras.layers.Dense(4, activation='softmax'))
+    hp_learning_rate = hp.Choice('learning_rate', values=[1e-2, 1e-3, 1e-4])
+    model.compile(
+        optimizer=Adam(hp_learning_rate),
+        loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False),
+        metrics= ['accuracy']
+    )
+    return model

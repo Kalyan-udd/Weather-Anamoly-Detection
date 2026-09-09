@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIH Anomaly Detection | Weather Dashboard</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#f0fdfa',
+              500: '#14b8a6',
+              600: '#0d9488',
+              900: '#134e4a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-teal-500 selection:text-white">
+  
+  <!-- Navigation Bar -->
+  <nav class="border-b border-slate-800 bg-slate-900/60 sticky top-0 z-50 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="p-2 bg-teal-500/10 border border-teal-500/30 rounded-lg text-teal-400">
+          <i data-lucide="shield-alert" class="w-5 h-5"></i>
+        </div>
+        <span class="text-lg font-bold tracking-wide text-white">Sky<span class="text-teal-400">Guard</span></span>
+      </div>
+      <a href="{{url_for('model_test_page')}}">
+      <div class="flex items-center space-x-4">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        TEST MODEL
+        </span>
+      </div>
+      </a>
+      <div class="flex items-center space-x-4">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span> System Operational
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- Top Bar: Title & Manual Search Form -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Weather Surveillance Dashboard</h1>
+        <p class="text-slate-400 text-sm mt-1">Real-time climatic metrics used for environmental anomaly detection.</p>
+      </div>
+
+      <!-- Search Form (Sends POST to backend) -->
+      <form id="weatherSearchForm" class="flex items-center gap-2 max-w-md w-full">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+          <input 
+            type="text" 
+            id="cityInput" 
+            placeholder="Search location (e.g., Guwahati, Mumbai)..." 
+            required
+            class="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition placeholder:text-slate-500"
+          />
+        </div>
+        <button 
+          type="submit" 
+          id="submitBtn"
+          class="px-4 py-2.5 bg-teal-500 hover:bg-teal-600 active:scale-95 text-slate-950 font-semibold rounded-xl text-sm transition flex items-center gap-2">
+          <span>Search</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- Location Status Banner -->
+    <div id="statusBanner" class="p-3 bg-slate-900 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-400 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <i data-lucide="map-pin" class="w-4 h-4 text-teal-400"></i>
+        <span id="sourceLabel">Detecting GPS location...</span>
+      </div>
+      <button onclick="detectUserLocation()" class="text-xs text-teal-400 hover:underline">Re-detect GPS</button>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Primary Weather Card -->
+      <div class="glass p-6 rounded-2xl flex flex-col justify-between border border-slate-800 relative overflow-hidden">
+        <div class="space-y-2">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Active Station</span>
+          <h2 id="cityName" class="text-2xl font-bold text-white">Locating...</h2>
+          <p id="geoCoords" class="text-xs text-slate-500 font-mono">Lat: -- | Lon: --</p>
+        </div>
+
+        <div class="my-8 flex items-baseline gap-4">
+          <div class="text-6xl font-extrabold tracking-tighter text-white" id="tempDisplay">--°C</div>
+          <div class="text-sm font-medium text-slate-400" id="weatherDesc">Fetching telemetry...</div>
+        </div>
+
+        <div class="border-t border-slate-800/80 pt-4 flex justify-between text-xs text-slate-400">
+          <span>Elevation: <strong id="elevationDisplay" class="text-slate-200">-- m</strong></span>
+          <span>Last Updated: <strong id="timestampDisplay" class="text-slate-200">--:--</strong></span>
+        </div>
+      </div>
+
+      <!-- Live Metrics Grid -->
+      <div class="lg:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-4">
+        
+        <!-- Humidity -->
+        <div class="glass p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-medium uppercase">Relative Humidity</span>
+            <i data-lucide="droplet" class="w-4 h-4 text-blue-400"></i>
+          </div>
+          <div class="mt-4">
+            <div id="humidityDisplay" class="text-2xl font-bold text-white">--%</div>
+            <p class="text-[11px] text-slate-500 mt-1">Nominal range: 40% - 70%</p>
+          </div>
+        </div>
+
+        <!-- Wind Speed -->
+        <div class="glass p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-medium uppercase">Wind Speed</span>
+            <i data-lucide="wind" class="w-4 h-4 text-cyan-400"></i>
+          </div>
+          <div class="mt-4">
+            <div id="windDisplay" class="text-2xl font-bold text-white">-- km/h</div>
+            <p class="text-[11px] text-slate-500 mt-1">Surface velocity (10m)</p>
+          </div>
+        </div>
+
+        <!-- Surface Pressure -->
+        <div class="glass p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-medium uppercase">Surface Pressure</span>
+            <i data-lucide="gauge" class="w-4 h-4 text-emerald-400"></i>
+          </div>
+          <div class="mt-4">
+            <div id="pressureDisplay" class="text-2xl font-bold text-white">-- hPa</div>
+            <p class="text-[11px] text-slate-500 mt-1">Barometric measurement</p>
+          </div>
+        </div>
+
+        <!-- Apparent Temperature -->
+        <div class="glass p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-medium uppercase">Feels Like</span>
+            <i data-lucide="thermometer" class="w-4 h-4 text-amber-400"></i>
+          </div>
+          <div class="mt-4">
+            <div id="apparentTempDisplay" class="text-2xl font-bold text-white">--°C</div>
+            <p class="text-[11px] text-slate-500 mt-1">Apparent temperature</p>
+          </div>
+        </div>
+
+        <!-- Precipitation -->
+        <div class="glass p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-medium uppercase">Precipitation</span>
+            <i data-lucide="cloud-rain" class="w-4 h-4 text-indigo-400"></i>
+          </div>
+          <div class="mt-4">
+            <div id="precipDisplay" class="text-2xl font-bold text-white">-- mm</div>
+            <p class="text-[11px] text-slate-500 mt-1">Rain & Snowfall</p>
+          </div>
+        </div>
+
+        <!-- Anomaly Status Box -->
+        <div class="glass p-4 rounded-xl border border-slate-800 bg-slate-900/30 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-medium uppercase">Anomaly Score</span>
+            <i data-lucide="activity" class="w-4 h-4 text-teal-400"></i>
+          </div>
+          <div class="mt-4">
+            <div class="text-xl font-bold text-emerald-400 flex items-center gap-1">
+              <span>NORMAL</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">Within standard deviation</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Initialize icons
+    lucide.createIcons();
+
+    // Map WMO Weather Codes from Open-Meteo to readable text
+    function decodeWMO(code) {
+      const wmoCodes = {
+        0: 'Clear Sky', 1: 'Mainly Clear', 2: 'Partly Cloudy', 3: 'Overcast',
+        45: 'Fog', 48: 'Depositing Rime Fog',
+        51: 'Light Drizzle', 53: 'Moderate Drizzle', 55: 'Dense Drizzle',
+        61: 'Slight Rain', 63: 'Moderate Rain', 65: 'Heavy Rain',
+        71: 'Slight Snow', 73: 'Moderate Snow', 75: 'Heavy Snow',
+        80: 'Rain Showers', 95: 'Thunderstorm'
+      };
+      return wmoCodes[code] || 'Atmospheric Disturbance';
+    }
+
+    // Helper: Update UI with weather data
+    function updateWeatherUI(name, lat, lon, data) {
+      const current = data.current || data;
+      document.getElementById('cityName').innerText = name;
+      document.getElementById('geoCoords').innerText = `Lat: ${parseFloat(lat).toFixed(2)} | Lon: ${parseFloat(lon).toFixed(2)}`;
+      document.getElementById('tempDisplay').innerText = `${Math.round(current.temperature_2m || 0)}°C`;
+      document.getElementById('apparentTempDisplay').innerText = `${Math.round(current.apparent_temperature || current.temperature_2m || 0)}°C`;
+      document.getElementById('humidityDisplay').innerText = `${current.relative_humidity_2m || '--'}%`;
+      document.getElementById('windDisplay').innerText = `${current.wind_speed_10m || '--'} km/h`;
+      document.getElementById('pressureDisplay').innerText = `${current.surface_pressure || '--'} hPa`;
+      document.getElementById('precipDisplay').innerText = `${current.precipitation ?? '0'} mm`;
+      document.getElementById('elevationDisplay').innerText = `${data.elevation ?? '--'} m`;
+      document.getElementById('weatherDesc').innerText = decodeWMO(current.weather_code);
+      document.getElementById('timestampDisplay').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Direct fetch from Open-Meteo API
+    async function fetchOpenMeteoData(lat, lon) {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,surface_pressure,wind_speed_10m`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Open-Meteo fetch failed');
+      return await res.json();
+    }
+
+    // 1. Geolocation Logic on page load
+    function detectUserLocation() {
+      const label = document.getElementById('sourceLabel');
+      label.innerText = 'Requesting browser location permission...';
+
+      if (!navigator.geolocation) {
+        label.innerText = 'Geolocation not supported. Defaulting to New Delhi.';
+        loadCoordinates(28.61, 77.20, 'New Delhi, India (Default)');
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          label.innerText = `GPS locked: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+
+          try {
+            // Optional: reverse geocoding using bigdatacloud open API for city label
+            let cityName = 'Your Current Location';
+            try {
+              const geoRes = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+              const geoData = await geoRes.json();
+              if (geoData.locality || geoData.city) {
+                cityName = `${geoData.city || geoData.locality}, ${geoData.countryCode}`;
+              }
+            } catch (e) {
+              console.warn('Reverse geocoding failed, using coordinates fallback.');
+            }
+
+            const weatherData = await fetchOpenMeteoData(lat, lon);
+            updateWeatherUI(cityName, lat, lon, weatherData);
+          } catch (err) {
+            console.error(err);
+            label.innerText = 'Failed to fetch weather for current location.';
+          }
+        },
+        (error) => {
+          console.warn('Geolocation denied or failed:', error.message);
+          label.innerText = 'Location access denied. Please use the search bar above.';
+          // Fallback location (e.g. New Delhi)
+          loadCoordinates(28.6139, 77.2090, 'New Delhi (Default)');
+        }
+      );
+    }
+
+    async function loadCoordinates(lat, lon, name) {
+      try {
+        const weatherData = await fetchOpenMeteoData(lat, lon);
+        updateWeatherUI(name, lat, lon, weatherData);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // 2. Manual Location Search Form (POST Request to Backend)
+    document.getElementById('weatherSearchForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const city = document.getElementById('cityInput').value.trim();
+      const submitBtn = document.getElementById('submitBtn');
+      const label = document.getElementById('sourceLabel');
+      
+      if (!city) return;
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>Loading...</span>`;
+      label.innerText = `Requesting weather data for "${city}"...`;
+
+      try {
+        /*
+          BACKEND INTEGRATION:
+          Sends a POST request to your backend service (e.g., FastAPI, Flask, Node.js).
+          Your backend endpoint can receive `{ location: city }`, query Open-Meteo,
+          run anomaly ML inference, and return the response.
+        */
+        const response = await fetch('/api/weather', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ location: city })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          // Expected backend response: { city: string, latitude: float, longitude: float, weather: open_meteo_json }
+          updateWeatherUI(result.city || city, result.latitude, result.longitude, result.weather);
+          label.innerText = `Fetched data from backend for: ${city}`;
+        } else {
+          throw new Error('Backend route unavailable. Using direct geocoding fallback.');
+        }
+      } catch (err) {
+        console.warn('Backend unavailable, falling back to direct Open-Meteo Geocoding:', err.message);
+        
+        // Client-side fallback to free Open-Meteo Geocoding API if backend isn't running yet
+        try {
+          const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`);
+          const geoData = await geoRes.json();
+          
+          if (geoData.results && geoData.results.length > 0) {
+            const loc = geoData.results[0];
+            const weatherData = await fetchOpenMeteoData(loc.latitude, loc.longitude);
+            updateWeatherUI(`${loc.name}, ${loc.country_code || ''}`, loc.latitude, loc.longitude, weatherData);
+            label.innerText = `Showing results for: ${loc.name}, ${loc.country || ''}`;
+          } else {
+            alert('Location not found. Please try another query.');
+          }
+        } catch (geoErr) {
+          alert('Could not retrieve weather data. Check your network.');
+        }
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Search</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+        lucide.createIcons();
+      }
+    });
+
+    // Run on startup
+    window.addEventListener('DOMContentLoaded', () => {
+      detectUserLocation();
+    });
+  </script>
+</body>
+</html>
