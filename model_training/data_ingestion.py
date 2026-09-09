@@ -2,7 +2,10 @@ from weather_anamoly.utils import ImportCoordinates, ImportData, AnomalyInjectio
 
 def training_data_extraction(city:str, start:str, end:str):
     coordinate = ImportCoordinates()
-    latitude, longitude = coordinate.Fetch_coordinates(city=city)
+    result = coordinate.Fetch_coordinates(city=city)
+    if result is None:
+        raise ValueError(f"Could not fetch coordinates for city: {city}")
+    latitude, longitude = result
     data = ImportData()
     df = data.extract(start, end, latitude, longitude)
     anomaly_injection = AnomalyInjection()
@@ -13,7 +16,10 @@ def training_data_extraction(city:str, start:str, end:str):
 
 def testing_data_extraction(city:str, start:str, end:str):
     coordinate = ImportCoordinates()
-    latitude, longitude = coordinate.Fetch_coordinates(city=city)
+    result = coordinate.Fetch_coordinates(city=city)
+    if result is None:
+        raise ValueError(f"Could not fetch coordinates for city: {city}")
+    latitude, longitude = result
     data = ImportData()
     df = data.extract(start, end, latitude, longitude)
     anomaly_injection = AnomalyInjection()

@@ -1,8 +1,8 @@
 from data_ingestion import training_data_extraction
 from weather_anamoly.logger import logger
 
-cities = ["Delhi", "Chennai", "Leh", "Jaisalmer", "Kolkata", "Shimla", "Guwahati", "Banglore", "Visakhapatnam"]
-start = "2000-01-01"
+cities = ["Bengaluru"]
+start = "2014-01-01"
 end = "2024-01-01"
 
 for city in cities:

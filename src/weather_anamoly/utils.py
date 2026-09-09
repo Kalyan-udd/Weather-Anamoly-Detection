@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from typing import Optional
 from pathlib import Path
+from weather_anamoly.logger import logger
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 data_path = f"{ROOT}/model_training"
@@ -28,25 +29,27 @@ class ImportData:
             "hourly": ['temperature_2m', 'relative_humidity_2m', 'surface_pressure'],
             "timezone": "Asia/Kolkata"
         }
+        try:
+            response = self.openmeteo.weather_api(url=url, params=params)[0]
+            hourly = response.Hourly()
+            self.hourly = hourly
+            self.dataframe = pd.DataFrame(
+                {
+                    "date": pd.date_range(
+                        start=pd.to_datetime(self.hourly.Time(), unit="s", utc=True),
+                        end=pd.to_datetime(self.hourly.TimeEnd(), unit="s", utc=True),
+                        freq=pd.Timedelta(seconds=self.hourly.Interval()),
+                        inclusive="left"
+                    ),
+                    "temperature": self.hourly.Variables(0).ValuesAsNumpy().astype('float64'),
+                    "humidity": self.hourly.Variables(1).ValuesAsNumpy().astype('float64'),
+                    "pressure": self.hourly.Variables(2).ValuesAsNumpy().astype('float64'),
+                },
+            )
 
-        response = self.openmeteo.weather_api(url=url, params=params)[0]
-        hourly = response.Hourly()
-        self.hourly = hourly
-        self.dataframe = pd.DataFrame(
-            {
-                "date": pd.date_range(
-                    start=pd.to_datetime(self.hourly.Time(), unit="s", utc=True),
-                    end=pd.to_datetime(self.hourly.TimeEnd(), unit="s", utc=True),
-                    freq=pd.Timedelta(seconds=self.hourly.Interval()),
-                    inclusive="left"
-                ),
-                "temperature": self.hourly.Variables(0).ValuesAsNumpy().astype('float64'),
-                "humidity": self.hourly.Variables(1).ValuesAsNumpy().astype('float64'),
-                "pressure": self.hourly.Variables(2).ValuesAsNumpy().astype('float64'),
-            },
-        )
-
-        return self.dataframe
+            return self.dataframe
+        except Exception as e:
+            logger.info(f"failed fetching data from the api {e}")
 
 class ImportCoordinates:
     def __init__(self, cache_path: str = f"{data_path}/data/coordinates/coordinates"):
@@ -54,30 +57,26 @@ class ImportCoordinates:
         self.retry = retry(self.session, retries=5, backoff_factor=0.2)
         self.latitude = None
         self.longitude = None
-        self.city = None
-        self.district = None
-        self.state = None
         self.time_zone = None
         self.elevation = None
 
-    def Fetch_coordinates(self, city:str ) -> tuple[float, float]:
+    def Fetch_coordinates(self, city:str ) -> Optional[tuple[float, float]]:
         url= "https://geocoding-api.open-meteo.com/v1/search"
         params = {
             'name': f"{city}, India",
             'count': 1,
         }
-        response = self.retry.get(url=url, params=params)
-        data = response.json()
-        result = data["results"][0]
-        self.city = result['name']
-        self.district = result['admin2']
-        self.state = result['admin1']
-        self.time_zone = result['timezone']
-        self.longitude = result['longitude']
-        self.latitude = result['latitude']
-        self.elevation = result['elevation']
-        return (self.latitude, self.longitude)
-
+        try:
+            response = self.retry.get(url=url, params=params)
+            data = response.json()
+            result = data["results"][0]
+            self.time_zone = result['timezone']
+            self.longitude = result['longitude']
+            self.latitude = result['latitude']
+            self.elevation = result['elevation']
+            return (self.latitude, self.longitude)
+        except Exception as e:
+            logger.info(f"failed to fetch coordinates {e}")
 class AnomalyInjection:
     def __init__(self,columns = ('temperature', 'pressure', 'humidity'), seed = 42):
         self.rnd = np.random.default_rng(seed)
@@ -168,8 +167,6 @@ class AnomalyInjection:
 def data_transformation(df:pd.DataFrame, elevation: Optional[float]=None, latitude: Optional[float]=None, longitude:Optional[float]=None, location_involvement: bool = False, )-> pd.DataFrame:
     df['date'] = pd.to_datetime(df['date'])
     df = df.set_index('date')
-    df['hour'] = df.index.hour
-    df['month'] = df.index.month
     df['cos_hour'] = np.cos(2*np.pi*df.index.hour/24)
     df['sin_hour'] = np.sin(2*np.pi*df.index.hour/24)
     df['cos_month'] = np.cos(2*np.pi*df.index.month/12)
@@ -177,8 +174,12 @@ def data_transformation(df:pd.DataFrame, elevation: Optional[float]=None, latitu
     df['temp_gradient'] = df['temperature'].diff()
     df['humid_gradient'] = df['humidity'].diff()
     df['press_gradient'] = df['pressure'].diff()
+    df["6hr_gradient_temp"] = df['temperature'].diff(periods=6)
+    df["6hr_gradient_press"] = df['pressure'].diff(periods=6)
+    df["6hr_gradient_humid"] = df['humidity'].diff(periods=6)
     if location_involvement:
         df['elevation'] = elevation
         df['latitude'] = latitude
         df['longitude'] = longitude
+    df.dropna(axis=0, inplace=True)
     return df

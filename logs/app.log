@@ -1,3 +1,48 @@
 [2026-09-04 19:23:09]:level:line:[1]:filename:[3948457850.py]:module:[3948457850]:error: hello this is the logger test message
 [2026-09-04 19:33:57]:[1]:[3948457850.py]:[3948457850]:error: hello this is the logger test message
 [2026-09-04 19:34:44]:[1]:[3948457850.py]:[3948457850]:message: hello this is the logger test message
+[2026-09-09 14:54:43]:[10]:[training_data.py]:[training_data]:message: Imported training data from Delhi between 2014-01-01 and 2024-01-01
+[2026-09-09 14:54:51]:[10]:[training_data.py]:[training_data]:message: Imported training data from Chennai between 2014-01-01 and 2024-01-01
+[2026-09-09 14:55:01]:[10]:[training_data.py]:[training_data]:message: Imported training data from Leh between 2014-01-01 and 2024-01-01
+[2026-09-09 14:55:09]:[10]:[training_data.py]:[training_data]:message: Imported training data from Jaisalmer between 2014-01-01 and 2024-01-01
+[2026-09-09 14:55:17]:[10]:[training_data.py]:[training_data]:message: Imported training data from Kolkata between 2014-01-01 and 2024-01-01
+[2026-09-09 14:56:02]:[10]:[training_data.py]:[training_data]:message: Imported training data from Shimla between 2014-01-01 and 2024-01-01
+[2026-09-09 14:56:10]:[10]:[training_data.py]:[training_data]:message: Imported training data from Guwahati between 2014-01-01 and 2024-01-01
+[2026-09-09 14:59:54]:[10]:[training_data.py]:[training_data]:message: Imported training data from Delhi between 2014-01-01 and 2024-01-01
+[2026-09-09 14:59:55]:[10]:[training_data.py]:[training_data]:message: Imported training data from Chennai between 2014-01-01 and 2024-01-01
+[2026-09-09 14:59:56]:[10]:[training_data.py]:[training_data]:message: Imported training data from Leh between 2014-01-01 and 2024-01-01
+[2026-09-09 14:59:58]:[10]:[training_data.py]:[training_data]:message: Imported training data from Jaisalmer between 2014-01-01 and 2024-01-01
+[2026-09-09 14:59:59]:[10]:[training_data.py]:[training_data]:message: Imported training data from Kolkata between 2014-01-01 and 2024-01-01
+[2026-09-09 15:00:00]:[10]:[training_data.py]:[training_data]:message: Imported training data from Shimla between 2014-01-01 and 2024-01-01
+[2026-09-09 15:00:01]:[10]:[training_data.py]:[training_data]:message: Imported training data from Guwahati between 2014-01-01 and 2024-01-01
+[2026-09-09 15:00:33]:[10]:[training_data.py]:[training_data]:message: Imported training data from Delhi between 2014-01-01 and 2024-01-01
+[2026-09-09 15:00:34]:[10]:[training_data.py]:[training_data]:message: Imported training data from Chennai between 2014-01-01 and 2024-01-01
+[2026-09-09 15:00:36]:[10]:[training_data.py]:[training_data]:message: Imported training data from Leh between 2014-01-01 and 2024-01-01
+[2026-09-09 15:00:37]:[10]:[training_data.py]:[training_data]:message: Imported training data from Jaisalmer between 2014-01-01 and 2024-01-01
+[2026-09-09 15:00:38]:[10]:[training_data.py]:[training_data]:message: Imported training data from Kolkata between 2014-01-01 and 2024-01-01
+[2026-09-09 15:00:39]:[10]:[training_data.py]:[training_data]:message: Imported training data from Shimla between 2014-01-01 and 2024-01-01
+[2026-09-09 15:17:36]:[16]:[data_ingestion.py]:[data_ingestion]:message: extraction failed 'results'
+[2026-09-09 15:17:36]:[10]:[training_data.py]:[training_data]:message: Imported training data from Banglore between 2014-01-01 and 2024-01-01
+[2026-09-09 15:17:47]:[10]:[training_data.py]:[training_data]:message: Imported training data from Visakhapatnam between 2014-01-01 and 2024-01-01
+[2026-09-09 15:18:49]:[16]:[data_ingestion.py]:[data_ingestion]:message: extraction failed 'results'
+[2026-09-09 15:18:49]:[10]:[training_data.py]:[training_data]:message: Imported training data from Banglore between 2014-01-01 and 2024-01-01
+[2026-09-09 15:26:35]:[79]:[utils.py]:[utils]:message: failed to fetch coordinates 'results'
+[2026-09-09 15:34:35]:[79]:[utils.py]:[utils]:message: failed to fetch coordinates 'results'
+[2026-09-09 15:47:18]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Delhi between 2024-01-01 and 2025-01-01
+[2026-09-09 15:47:24]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Chennai between 2024-01-01 and 2025-01-01
+[2026-09-09 15:47:28]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Leh between 2024-01-01 and 2025-01-01
+[2026-09-09 15:47:34]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Jaisalmer between 2024-01-01 and 2025-01-01
+[2026-09-09 15:47:34]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Kolkata between 2024-01-01 and 2025-01-01
+[2026-09-09 15:47:38]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Shimla between 2024-01-01 and 2025-01-01
+[2026-09-09 15:47:43]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Guwahati between 2024-01-01 and 2025-01-01
+[2026-09-09 15:47:43]:[79]:[utils.py]:[utils]:message: failed to fetch coordinates 'results'
+[2026-09-09 15:48:59]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Delhi between 2024-01-01 and 2025-01-01
+[2026-09-09 15:49:00]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Chennai between 2024-01-01 and 2025-01-01
+[2026-09-09 15:49:00]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Leh between 2024-01-01 and 2025-01-01
+[2026-09-09 15:49:00]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Jaisalmer between 2024-01-01 and 2025-01-01
+[2026-09-09 15:49:00]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Kolkata between 2024-01-01 and 2025-01-01
+[2026-09-09 15:49:00]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Shimla between 2024-01-01 and 2025-01-01
+[2026-09-09 15:49:00]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Guwahati between 2024-01-01 and 2025-01-01
+[2026-09-09 15:49:05]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Bengaluru between 2024-01-01 and 2025-01-01
+[2026-09-09 15:49:07]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Visakhapatnam between 2024-01-01 and 2025-01-01
+[2026-09-09 15:49:44]:[10]:[training_data.py]:[training_data]:message: Imported training data from Bengaluru between 2014-01-01 and 2024-01-01
