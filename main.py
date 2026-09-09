@@ -1,28 +1,27 @@
-from fastapi import FastAPI
-from src.weather_anamoly.api.routes import router
-from src.weather_anamoly.database.database import initialize_database
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+from src.weather_anamoly.live_fetch import resolve_city, fetch_and_prepare
+from src.weather_anamoly.model import predict
 
-app = FastAPI(
-    title="Weather Anomaly Detection API",
-    description="API for Automatic Weather Station monitoring",
-    version="1.0.0"
-)
-
-initialize_database()
-app.include_router(router)
+app = FastAPI(title="Weather Anomaly Detection API")
+templates = Jinja2Templates(directory="templates")
 
 
 @app.get("/")
-def root():
+def dashboard(request: Request, city: str = "Delhi"):
+    latitude, longitude, resolved_city, state = resolve_city(city)
+    latest_row = fetch_and_prepare(latitude, longitude)
+    anomaly = predict(latest_row)
 
-    return {
-        "message": "Weather Anomaly Detection API is running"
-    }
+    return templates.TemplateResponse("index.html", {
+        "request": request,
+        "city": resolved_city,
+        "state": state,
+        "reading": latest_row.to_dict(orient="records")[0],
+        "anomaly": anomaly
+    })
 
 
 @app.get("/health")
 def health_check():
-
-    return {
-        "status": "healthy"
-    }
+    return {"status": "healthy"}
