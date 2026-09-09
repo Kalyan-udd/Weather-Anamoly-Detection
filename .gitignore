@@ -11,3 +11,6 @@ wheels/
 .lock
 venv/
 env/
+# Local SQLite database
+data/*.dbvenv/
+.venv/
