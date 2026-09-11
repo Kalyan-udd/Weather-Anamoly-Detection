@@ -12,7 +12,7 @@ def training_data_extraction(city:str, start:str, end:str):
     df = anomaly_injection.inject_anomalies(df=df)
     elevation = coordinate.elevation
     df = data_transformation(df, location_involvement=True, latitude=latitude, longitude=longitude, elevation=elevation)
-    df.to_csv(f"model_training/data/{city}_training_data.csv")
+    return df
 
 def testing_data_extraction(city:str, start:str, end:str):
     coordinate = ImportCoordinates()
@@ -26,4 +26,4 @@ def testing_data_extraction(city:str, start:str, end:str):
     df = anomaly_injection.inject_anomalies(df=df)
     elevation = coordinate.elevation
     df = data_transformation(df, location_involvement=True, latitude=latitude, longitude=longitude, elevation=elevation)
-    df.to_csv(f"model_training/data/{city}_testing_data.csv")
+    return df

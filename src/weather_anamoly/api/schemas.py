@@ -12,6 +12,6 @@ class WeatherRequest(BaseModel):
     location: str
 
 class ModelTest(BaseModel):
-    city: str
-    start_time: str
-    end_time: str
+    location: str
+    start_date: str
+    end_date: str

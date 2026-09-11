@@ -46,3 +46,372 @@
 [2026-09-09 15:49:05]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Bengaluru between 2024-01-01 and 2025-01-01
 [2026-09-09 15:49:07]:[10]:[testing_data.py]:[testing_data]:message: importing test data from Visakhapatnam between 2024-01-01 and 2025-01-01
 [2026-09-09 15:49:44]:[10]:[training_data.py]:[training_data]:message: Imported training data from Bengaluru between 2014-01-01 and 2024-01-01
+[2026-09-10 02:15:35]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:15:38]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:19:19]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:19:21]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:19:35]:[72]:[main.py]:[main]:message: Exception has occured while testing model high <= 0
+[2026-09-10 02:20:11]:[72]:[main.py]:[main]:message: Exception has occured while testing model "None of [Index([0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n       ...\n       0, 0, 0, 0, 0, 0, 0, 0, 0, 0],\n      dtype='int64', length=4578)] are in the [columns]"
+[2026-09-10 02:21:56]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:21:59]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:23:22]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:23:53]:[72]:[main.py]:[main]:message: Exception has occured while testing model 0
+[2026-09-10 02:26:19]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:26:22]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:26:53]:[72]:[main.py]:[main]:message: Exception has occured while testing model high <= 0
+[2026-09-10 02:30:10]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:13]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:15]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:18]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:20]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:23]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:25]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:28]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:31]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:34]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:37]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:42]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:46]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:48]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:54]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:57]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:30:59]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:31:02]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:31:04]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:31:07]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:31:11]:[39]:[main.py]:[main]:message: Exception has occured while testing model high <= 0
+[2026-09-10 02:31:20]:[39]:[main.py]:[main]:message: Exception has occured while testing model high <= 0
+[2026-09-10 02:40:57]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:40:59]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:41:01]:[40]:[main.py]:[main]:message: Extraction error: high <= 0
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 38, in model_test
+    df = testing_data_extraction(city=city, start=start, end=end)
+  File "/home/Beta/Desktop/coding/weather_anamoly/model_training/data_ingestion.py", line 26, in testing_data_extraction
+    df = anomaly_injection.inject_anomalies(df=df)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 167, in inject_anomalies
+    self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df, clean_std=clean_stds)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 144, in inject_drift_fault
+    start = self.rnd.integers(0, n - duration)
+  File "numpy/random/_generator.pyx", line 682, in numpy.random._generator.Generator.integers
+  File "numpy/random/_bounded_integers.pyx", line 1334, in numpy.random._bounded_integers._rand_int64
+ValueError: high <= 0
+[2026-09-10 02:41:02]:[40]:[main.py]:[main]:message: Extraction error: high <= 0
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 38, in model_test
+    df = testing_data_extraction(city=city, start=start, end=end)
+  File "/home/Beta/Desktop/coding/weather_anamoly/model_training/data_ingestion.py", line 26, in testing_data_extraction
+    df = anomaly_injection.inject_anomalies(df=df)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 167, in inject_anomalies
+    self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df, clean_std=clean_stds)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 144, in inject_drift_fault
+    start = self.rnd.integers(0, n - duration)
+  File "numpy/random/_generator.pyx", line 682, in numpy.random._generator.Generator.integers
+  File "numpy/random/_bounded_integers.pyx", line 1334, in numpy.random._bounded_integers._rand_int64
+ValueError: high <= 0
+[2026-09-10 02:44:54]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 02:44:57]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:18:37]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:18:40]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:30:48]:[40]:[main.py]:[main]:message: Extraction error: high <= 0
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 38, in model_test
+    df = testing_data_extraction(city=city, start=start, end=end)
+  File "/home/Beta/Desktop/coding/weather_anamoly/model_training/data_ingestion.py", line 26, in testing_data_extraction
+    df = anomaly_injection.inject_anomalies(df=df)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 167, in inject_anomalies
+    self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df, clean_std=clean_stds)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 144, in inject_drift_fault
+    start = self.rnd.integers(0, n - duration)
+  File "numpy/random/_generator.pyx", line 682, in numpy.random._generator.Generator.integers
+  File "numpy/random/_bounded_integers.pyx", line 1334, in numpy.random._bounded_integers._rand_int64
+ValueError: high <= 0
+[2026-09-10 09:31:16]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:31:39]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:31:46]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:31:59]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:32:02]:[40]:[main.py]:[main]:message: Extraction error: 'results'
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 38, in model_test
+    df = testing_data_extraction(city=city, start=start, end=end)
+  File "/home/Beta/Desktop/coding/weather_anamoly/model_training/data_ingestion.py", line 19, in testing_data_extraction
+    result = coordinate.Fetch_coordinates(city=city)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 76, in Fetch_coordinates
+    result = data["results"][0]
+             ~~~~^^^^^^^^^^^
+KeyError: 'results'
+[2026-09-10 09:32:11]:[40]:[main.py]:[main]:message: Extraction error: 'results'
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 38, in model_test
+    df = testing_data_extraction(city=city, start=start, end=end)
+  File "/home/Beta/Desktop/coding/weather_anamoly/model_training/data_ingestion.py", line 19, in testing_data_extraction
+    result = coordinate.Fetch_coordinates(city=city)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 76, in Fetch_coordinates
+    result = data["results"][0]
+             ~~~~^^^^^^^^^^^
+KeyError: 'results'
+[2026-09-10 09:32:18]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:36:26]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:36:29]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:36:37]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:36:47]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:36:50]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:37:04]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:37:07]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:37:14]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:37:23]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:37:35]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:37:44]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:38:45]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:39:07]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:39:15]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:40:09]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:40:15]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:40:17]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:40:29]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:40:31]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:40:45]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:41:10]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:41:16]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:41:18]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:41:23]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:42:18]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:42:23]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:45:15]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:45:18]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:45:21]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:45:24]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:45:43]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:45:46]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:45:48]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:45:51]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:46:31]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:46:38]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:46:40]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:46:44]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:46:48]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:47:07]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:48:57]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:48:59]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:50:13]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:50:20]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:50:23]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:50:25]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:50:48]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:50:51]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:50:57]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:51:05]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:51:08]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:51:13]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:51:18]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:51:23]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:51:44]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:51:46]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:51:49]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:51:53]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:51:56]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:51:59]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:52:03]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:52:14]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:52:19]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:52:22]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:52:24]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:52:27]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:52:29]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:52:31]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:52:34]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:53:07]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:53:11]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:53:15]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:53:22]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:53:30]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:53:41]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:53:44]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:53:46]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:53:48]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:53:51]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:53:53]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:54:19]:[44]:[main.py]:[main]:message: Extraction error: 'results'
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 39, in model_test
+    lat , long = coor.Fetch_coordinates(city)
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 76, in Fetch_coordinates
+    result = data["results"][0]
+             ~~~~^^^^^^^^^^^
+KeyError: 'results'
+[2026-09-10 09:56:46]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:56:50]:[44]:[main.py]:[main]:message: Extraction error: Open-Meteo extraction error: No hourly weather data returned for the selected window.
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 41, in model_test
+    df = extract(latitude=lat, longitude=long, start_date=start, end_date=end)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 247, in extract
+    raise ValueError(f"Open-Meteo extraction error: {error_msg}")
+ValueError: Open-Meteo extraction error: No hourly weather data returned for the selected window.
+[2026-09-10 09:59:06]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:59:16]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:59:29]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:59:37]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 09:59:41]:[44]:[main.py]:[main]:message: Extraction error: 'date'
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/.venv/lib/python3.13/site-packages/pandas/core/indexes/base.py", line 3641, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "pandas/_libs/index.pyx", line 168, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 197, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7668, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7676, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'date'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 42, in model_test
+    df = data_transformation(df=df, elevation=elevation, location_involvement=True, latitude=lat, longitude=long)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 172, in data_transformation
+    df['date'] = pd.to_datetime(df['date'])
+                                ~~^^^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/.venv/lib/python3.13/site-packages/pandas/core/frame.py", line 4378, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "/home/Beta/Desktop/coding/weather_anamoly/.venv/lib/python3.13/site-packages/pandas/core/indexes/base.py", line 3648, in get_loc
+    raise KeyError(key) from err
+KeyError: 'date'
+[2026-09-10 10:00:06]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 10:00:08]:[44]:[main.py]:[main]:message: Extraction error: 'date'
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/.venv/lib/python3.13/site-packages/pandas/core/indexes/base.py", line 3641, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "pandas/_libs/index.pyx", line 168, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 197, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7668, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7676, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'date'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 42, in model_test
+    df = data_transformation(df=df, elevation=elevation, location_involvement=True, latitude=lat, longitude=long)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 172, in data_transformation
+    df['date'] = pd.to_datetime(df['date'])
+                                ~~^^^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/.venv/lib/python3.13/site-packages/pandas/core/frame.py", line 4378, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "/home/Beta/Desktop/coding/weather_anamoly/.venv/lib/python3.13/site-packages/pandas/core/indexes/base.py", line 3648, in get_loc
+    raise KeyError(key) from err
+KeyError: 'date'
+[2026-09-10 10:00:51]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 10:00:54]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 10:05:46]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 10:05:50]:[46]:[main.py]:[main]:message: Extraction error: high <= 0
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 43, in model_test
+    df = anomalies.inject_anomalies(df=df)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 167, in inject_anomalies
+    self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df, clean_std=clean_stds)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 144, in inject_drift_fault
+    start = self.rnd.integers(0, n - duration)
+  File "numpy/random/_generator.pyx", line 682, in numpy.random._generator.Generator.integers
+  File "numpy/random/_bounded_integers.pyx", line 1334, in numpy.random._bounded_integers._rand_int64
+ValueError: high <= 0
+[2026-09-10 10:06:05]:[46]:[main.py]:[main]:message: Extraction error: high <= 0
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 43, in model_test
+    df = anomalies.inject_anomalies(df=df)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 167, in inject_anomalies
+    self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df, clean_std=clean_stds)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 144, in inject_drift_fault
+    start = self.rnd.integers(0, n - duration)
+  File "numpy/random/_generator.pyx", line 682, in numpy.random._generator.Generator.integers
+  File "numpy/random/_bounded_integers.pyx", line 1334, in numpy.random._bounded_integers._rand_int64
+ValueError: high <= 0
+[2026-09-10 10:06:30]:[46]:[main.py]:[main]:message: Extraction error: high <= 0
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 43, in model_test
+    df = anomalies.inject_anomalies(df=df)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 167, in inject_anomalies
+    self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df, clean_std=clean_stds)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 144, in inject_drift_fault
+    start = self.rnd.integers(0, n - duration)
+  File "numpy/random/_generator.pyx", line 682, in numpy.random._generator.Generator.integers
+  File "numpy/random/_bounded_integers.pyx", line 1334, in numpy.random._bounded_integers._rand_int64
+ValueError: high <= 0
+[2026-09-10 10:08:49]:[46]:[main.py]:[main]:message: Extraction error: high <= 0
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 43, in model_test
+    df = anomalies.inject_anomalies(df=df)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 167, in inject_anomalies
+    self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df, clean_std=clean_stds)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 144, in inject_drift_fault
+    start = self.rnd.integers(0, n - duration)
+  File "numpy/random/_generator.pyx", line 682, in numpy.random._generator.Generator.integers
+  File "numpy/random/_bounded_integers.pyx", line 1334, in numpy.random._bounded_integers._rand_int64
+ValueError: high <= 0
+[2026-09-10 10:10:25]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 10:10:27]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 10:10:40]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 10:10:43]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 10:12:22]:[46]:[main.py]:[main]:message: Extraction error: high <= 0
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 43, in model_test
+    df = anomalies.inject_anomalies(df=df)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 168, in inject_anomalies
+    self.inject_drift_fault(n_values=max(1, n_hours//drift_rate), df=df, clean_std=clean_stds)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 144, in inject_drift_fault
+    start = self.rnd.integers(0, n - duration)
+  File "numpy/random/_generator.pyx", line 682, in numpy.random._generator.Generator.integers
+  File "numpy/random/_bounded_integers.pyx", line 1334, in numpy.random._bounded_integers._rand_int64
+ValueError: high <= 0
+[2026-09-10 10:21:29]:[46]:[main.py]:[main]:message: Extraction error: Open-Meteo extraction error: Parameter 'end_date' is out of allowed range from 2026-06-09 to 2026-09-25
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 41, in model_test
+    df = extract(latitude=lat, longitude=long, start_date=start, end_date=end)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 248, in extract
+    raise ValueError(f"Open-Meteo extraction error: {error_msg}")
+ValueError: Open-Meteo extraction error: Parameter 'end_date' is out of allowed range from 2026-06-09 to 2026-09-25
+[2026-09-10 10:22:38]:[46]:[main.py]:[main]:message: Extraction error: Open-Meteo extraction error: Parameter 'end_date' is out of allowed range from 2026-06-09 to 2026-09-25
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 41, in model_test
+    df = extract(latitude=lat, longitude=long, start_date=start, end_date=end)
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 248, in extract
+    raise ValueError(f"Open-Meteo extraction error: {error_msg}")
+ValueError: Open-Meteo extraction error: Parameter 'end_date' is out of allowed range from 2026-06-09 to 2026-09-25
+[2026-09-10 10:23:24]:[46]:[main.py]:[main]:message: Extraction error: 'results'
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 39, in model_test
+    lat , long = coor.Fetch_coordinates(city)
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 76, in Fetch_coordinates
+    result = data["results"][0]
+             ~~~~^^^^^^^^^^^
+KeyError: 'results'
+[2026-09-10 10:55:41]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 10:55:44]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 11:26:45]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 11:26:47]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 14:56:36]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 14:56:38]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 15:11:29]:[46]:[main.py]:[main]:message: Extraction error: 'results'
+Traceback (most recent call last):
+  File "/home/Beta/Desktop/coding/weather_anamoly/main.py", line 39, in model_test
+    lat , long = coor.Fetch_coordinates(city)
+                 ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/Beta/Desktop/coding/weather_anamoly/src/weather_anamoly/utils.py", line 76, in Fetch_coordinates
+    result = data["results"][0]
+             ~~~~^^^^^^^^^^^
+KeyError: 'results'
+[2026-09-10 21:34:09]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 21:34:11]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 22:00:06]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-10 22:00:08]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-11 23:16:27]:[17]:[main.py]:[main]:message: Loading the model into the server.
+[2026-09-11 23:16:29]:[17]:[main.py]:[main]:message: Loading the model into the server.

@@ -14,3 +14,4 @@ env/
 # Local SQLite database
 data/*.dbvenv/
 .venv/
+model_training/data/

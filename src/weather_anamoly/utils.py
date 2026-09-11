@@ -158,7 +158,8 @@ class AnomalyInjection:
         if "label" not in df.columns:
             df['label'] = "genuine"
         n_hours = len(df)
-
+        calculated_count = int(n_hours * 0.05)  # 5%
+        num_anomalies = max(1, calculated_count)
         clean_stds = df[list(self.columns)].std().to_dict()
 
         self.inject_spike(n_events=max(1, n_hours//spike_rate), df=df, clean_std=clean_stds)
@@ -227,3 +228,33 @@ def Build_model(hp):
         metrics= ['accuracy']
     )
     return model
+
+def extract(start_date: str, end_date: str, latitude: float, longitude: float) -> pd.DataFrame:
+        url = "https://api.open-meteo.com/v1/forecast"
+        params = {
+            "latitude": latitude,
+            "longitude": longitude,
+            "start_date": start_date,
+            "end_date": end_date,
+            "hourly": "temperature_2m,relative_humidity_2m,surface_pressure",
+            "timezone": "Asia/Kolkata",
+        }
+        response = requests.get(url=url, params=params)
+        payload = response.json()
+        hourly = payload.get("hourly")
+        if not hourly or "time" not in hourly:
+            error_msg = payload.get(
+                "reason", "No hourly weather data returned for the selected window.")
+            raise ValueError(f"Open-Meteo extraction error: {error_msg}")
+        df = pd.DataFrame(hourly)
+        df = df.rename(
+            columns={
+                "time":"date",
+                "temperature_2m": "temperature",
+                "relative_humidity_2m": "humidity",
+                "surface_pressure": "pressure",
+            }
+        )
+        ordered_columns = ["date","temperature", "humidity", "pressure"]
+        df = df[ordered_columns]
+        return df
