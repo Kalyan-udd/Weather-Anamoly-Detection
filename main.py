@@ -9,12 +9,13 @@ import numpy as np
 from weather_anamoly.logger import logger
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, confusion_matrix
 
+model = tf.keras.models.load_model("artifacts/History_model.keras")
+logger.info("Loading the model into the server.")
 
 app = FastAPI(title="Weather Anomaly Detection API")
 templates = Jinja2Templates(directory="templates")
 
-model = tf.keras.models.load_model("artifacts/History_model.keras")
-logger.info("Loading the model into the server.")
+
 
 @app.get("/")
 def index(request: Request):
