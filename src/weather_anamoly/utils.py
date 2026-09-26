@@ -229,7 +229,7 @@ def Build_model(hp):
     )
     return model
 
-def extract(start_date: str, end_date: str, latitude: float, longitude: float) -> pd.DataFrame:
+def extract_forecast(start_date: str, end_date: str, latitude: float, longitude: float) -> pd.DataFrame:
         url = "https://api.open-meteo.com/v1/forecast"
         params = {
             "latitude": latitude,
@@ -258,3 +258,7 @@ def extract(start_date: str, end_date: str, latitude: float, longitude: float) -
         ordered_columns = ["date","temperature", "humidity", "pressure"]
         df = df[ordered_columns]
         return df
+
+
+
+

@@ -15,3 +15,6 @@ class ModelTest(BaseModel):
     location: str
     start_date: str
     end_date: str
+
+class Xgboost(BaseModel):
+    inject_anomaly: bool

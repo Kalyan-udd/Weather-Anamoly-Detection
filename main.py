@@ -1,13 +1,16 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from weather_anamoly.api.schemas import WeatherRequest, ModelTest
-from weather_anamoly.utils import fetch_continuous_data, extract, ImportCoordinates, data_transformation
+from weather_anamoly.utils import fetch_continuous_data, ImportCoordinates, data_transformation
+from weather_anamoly.lstm import forecat_raw
 import tensorflow as tf
 from weather_anamoly.utils import AnomalyInjection 
 from weather_anamoly.model import FEATURE_COLUMNS, LABEL_ENCODER, LABEL_DECODER
 import numpy as np
 from weather_anamoly.logger import logger
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, confusion_matrix
+import pandas as pd
+from routes import router
 
 model = tf.keras.models.load_model("artifacts/History_model.keras")
 logger.info("Loading the model into the server.")
@@ -15,10 +18,10 @@ logger.info("Loading the model into the server.")
 app = FastAPI(title="Weather Anomaly Detection API")
 templates = Jinja2Templates(directory="templates")
 
-
+app.include_router(router=router)
 
 @app.get("/")
-def index(request: Request):
+async def index(request: Request):
     return templates.TemplateResponse(request=request, name='index.html')
 
 @app.get("/model_test")
@@ -39,7 +42,7 @@ async def model_test(req: ModelTest):
         coor = ImportCoordinates()
         lat , long = coor.Fetch_coordinates(city)
         elevation = coor.elevation
-        df = extract(latitude=lat, longitude=long, start_date=start, end_date=end)
+        df = forecat_raw(latitude=lat, longitude=long, start_date=start, end_date=end)
         anomalies = AnomalyInjection()
         df = anomalies.inject_anomalies(df=df)
         df = data_transformation(df=df, elevation=elevation, location_involvement=True, latitude=lat, longitude=long)
@@ -53,13 +56,15 @@ async def model_test(req: ModelTest):
     y_true = df['label'].map(LABEL_ENCODER).to_numpy()
     possibilities = model.predict(x_test)
     y_pred = np.argmax(possibilities, axis=1)
+    mismatch_indices = np.where(y_pred != y_true)[0]
+    correct_indices = np.where(y_pred == y_true)[0]
     acc = accuracy_score(y_true=y_true, y_pred=y_pred)
     precision, recall, f1, _ = precision_recall_fscore_support(
         y_pred=y_pred, y_true=y_true, average='weighted', zero_division=0
     )
     cm = confusion_matrix(y_true, y_pred).tolist()
     sample_inspection=[]
-    for i in range(min(15, len(y_pred))):
+    for i in range(len(y_pred)):
         sample_inspection.append(
             {
                 "sample_index": i+1,
@@ -68,6 +73,19 @@ async def model_test(req: ModelTest):
                 "is_correct": bool(y_true[i]==y_pred[i]),
                 "confidence": round(float(np.max(possibilities[i]))*100, 1)
 
+            }
+        )
+    for idx in mismatch_indices:
+        row = df.iloc[idx]
+        sample_inspection.append(
+            {
+                "sample_index": int(idx)+1,
+                "actual": LABEL_DECODER.get(y_true[(int(idx))], str(y_true[int(idx)])),
+                "predicted": LABEL_DECODER.get(y_pred[int(idx)], str(y_pred[int(idx)])),
+                "is_correct" : False,
+                "confidence": round(float(np.max(possibilities[i]))*100, 1),
+                "features": {k: (float(v) if pd.notna(v) else None) for k, v in row[FEATURE_COLUMNS].to_dict().items()},
+                "date" : str(row['date']) if 'date' in df.columns else None
             }
         )
     return {
