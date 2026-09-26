@@ -84,10 +84,11 @@
     
     <!-- Top Header -->
     <div>
+      <h1 class="text-2xl sm:text-5xl font-bold tracking-tight right text-teal-400">New <span class="text-2xl sm:text-5xl font-bold tracking-wide text-teal-400">Delhi</span><span><p class="text-slate-400 text-sm mt-1">Capital city of India.</p></span></h1>
       <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">Weather Surveillance & Anomaly Dashboard</h1>
       <p class="text-slate-400 text-sm mt-1">Real-time multi-parameter model prediction telemetry from backend API.</p>
+      <p class="text-slate-400 text-sm mt-1">And predictions are made on the basis of previous 2 weeks data of temperature, pressure, humidity changes in New Delhi.</p>
     </div>
-
     <!-- Interactive Sensitivity & Single Anomaly Trigger -->
     <div class="glass p-5 rounded-2xl border border-slate-800 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
       
@@ -567,7 +568,18 @@
           title: { text: unitStr, font: { color: '#64748b', size: 10 } } 
         },
         showlegend: false,
-        hovermode: 'x unified'
+        hovermode: 'x unified',
+        hoverlabel: {
+          bgcolor: '#0f172a',        // Deep slate background
+          bordercolor: '#38bdf8',    // Bright sky-blue border
+          namelength: -1,            // Don't truncate text
+          font: {
+            family: 'Inter, system-ui, sans-serif',
+            size: 13,                // Larger font size for better visibility
+            color: '#f8fafc'         // High-contrast white text
+          },
+          align: 'left'
+        }
       };
 
       Plotly.react(divId, [traceUpper, traceLower, tracePred, traceActual, traceAnomalies], layout, { responsive: true, displayModeBar: false });
