@@ -15,7 +15,6 @@ xgb_temp.load_model("artifacts/TempModelXGB.json")
 xgb_press.load_model("artifacts/PressModelXGB.json")
 xgb_humidity.load_model("artifacts/HumModelXGB.json")
 
-
 router = APIRouter()
 
 

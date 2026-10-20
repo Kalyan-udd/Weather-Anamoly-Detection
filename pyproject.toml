@@ -26,6 +26,7 @@ dependencies = [
     "sweetviz>=2.3.3",
     "tensorboard>=2.21.0",
     "tensorflow[and-cuda]>=2.21.0",
+    "visualkeras>=0.2.0",
     "xgboost>=3.4.1",
 ]
 

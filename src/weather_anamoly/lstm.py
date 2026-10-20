@@ -3,42 +3,44 @@ import pandas as pd
 import requests
 
 
-def inverse_transform_3D(windows: np.ndarray, window_size=24):
+
+def inverse_transform_3D_test(windows: np.ndarray, window_size=24):
     n_windows, _, n_features = windows.shape
     total_len = n_windows + window_size - 1
     sums = np.zeros((total_len, n_features))
     counts = np.zeros((total_len, 1))
-
     for i in range(n_windows):
         sums[i:i+window_size] += windows[i]
         counts[i:i+window_size] += 1
-
     return sums / counts
 
-def transform_3D(df: pd.DataFrame, window_size = 24):
-    n = len(df)
-    data_matrix = df.values
-    window = []
-    for i in range(n- window_size + 1):
-        window.append(data_matrix[i:i+window_size])
-    return np.array(window)
+def transform_3D_test(df: pd.DataFrame, window_size = 24):
+    values = df[['z_temperature', 'z_humidity', 'z_pressure']].values
+    x = []
+    y = []
+    for i in range(window_size, len(df)):
+        x.append(values[i-window_size:i])
+        y.append(values[i])
+    return (np.array(x), np.array(y))
 
-def lstm_data_encoding(df:pd.DataFrame):
-    df['date'] = pd.to_datetime(df['date'])
-    df = df.set_index('date')
-    df['month'] = df.index.month
-    df['hour'] = df.index.hour
-    df['mean_temp'] = df.groupby(['month', 'hour'])['temperature'].transform('mean')
-    df['mean_press'] = df.groupby(['month', 'hour'])['pressure'].transform("mean")
-    df['mean_humidity'] = df.groupby(['month', 'hour'])['humidity'].transform("mean")
-    df['std_temp'] = df.groupby(['month', 'hour'])['temperature'].transform('std')
-    df['std_press'] = df.groupby(['month', 'hour'])['pressure'].transform("std")
-    df['std_humidity'] = df.groupby(['month', 'hour'])['humidity'].transform('std')
-    df['z_temp'] = (df['temperature'] - df['mean_temp'])/df['std_temp']
-    df['z_press'] = (df['pressure'] - df['mean_press'])/df['std_press']
-    df['z_humidity'] = (df['humidity']- df['mean_humidity'])/df['std_humidity']
-    df = df.reset_index()
-    return df
+
+def lstm_multivariate_feature_generation(df:pd.DataFrame):
+    data = df.copy()
+    if 'date' in data.columns:
+        data['date'] = pd.to_datetime(df['date'])
+        data = data.set_index('date')
+    variables = ['temperature', 'pressure', 'humidity']
+    data['hour'] = data.index.hour
+    data['month'] = data.index.month
+    for col in variables:
+        data[f'{col}_mean'] = data.groupby(['month','hour'])[col].transform('mean')
+        data[f'{col}_std'] = data.groupby(['month','hour'])[col].transform('std').fillna(data.groupby(['hour'])[col].transform('std')).replace(0, 1.0)
+
+    data['z_temperature'] = (data['temperature'] - data['temperature_mean'])/data['temperature_std']
+    data['z_humidity'] = (data['humidity']-data['humidity_mean'])/data['humidity_std']
+    data['z_pressure'] = (data['pressure'] - data['pressure_mean'])/data['pressure_std']
+    data.reset_index(inplace=True)
+    return data
 
 def mean_std_calculation(df:pd.DataFrame):
     df_ = df.copy()
@@ -84,7 +86,7 @@ def forecat_raw(start_date: str, end_date: str, latitude: float, longitude: floa
     df['date'] = pd.to_datetime(df['date'])
     df = df.copy()
     return df
-
+    
 def table_combining(df:pd.DataFrame, table:pd.DataFrame)->pd.DataFrame:
     df_ = df.copy()
     if 'date' in df_.columns:
