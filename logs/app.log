@@ -1156,3 +1156,5 @@ TypeError: Invalid value '[ 41.24374776  38.48749552  36.73124328  34.97499104  
  569.83654592 571.08029368 575.32404144 566.56778921]' for dtype 'int64'
 [2026-10-10 18:00:09]:[16]:[main.py]:[main]:message: Loading the model into the server.
 [2026-10-10 18:00:11]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-10-28 18:25:44]:[16]:[main.py]:[main]:message: Loading the model into the server.
+[2026-10-28 18:25:47]:[16]:[main.py]:[main]:message: Loading the model into the server.
