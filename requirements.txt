@@ -1,5 +1,6 @@
 absl-py==2.5.0
 agent-detector==2.0.0
+aggdraw==1.4.1
 annotated-doc==0.0.5
 annotated-types==0.8.0
 anyio==4.15.1
@@ -134,10 +135,10 @@ urllib3==2.7.0
 urllib3-future==2.24.908
 uvicorn==0.52.4
 uvloop==0.22.1
+visualkeras==0.2.0
 wassima==2.1.4
 watchfiles==1.2.0
 wcwidth==0.8.3
--e file:///home/Beta/Desktop/coding/weather_anamoly
 websockets==17.1
 werkzeug==3.1.8
 wheel==0.48.0
